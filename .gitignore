@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual environment
+venv/
+
+# Environment variables
+.env
+
+# VS Code
+.vscode/
+
+# ChromaDB vector storage (optional, if regenerated on deploy)
+chroma_store/
+
+# OS files
+.DS_Store
+Thumbs.db

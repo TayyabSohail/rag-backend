@@ -1,6 +1,7 @@
-import fitz  # PyMuPDF
+import fitz
 import docx
 import html2text
+import requests
 
 def parse_and_chunk(content: bytes, filename: str):
     chunks = []
@@ -37,3 +38,14 @@ def chunk_text(text: str, max_tokens: int = 300):
     if chunk:
         chunks.append(chunk.strip())
     return chunks
+
+def parse_and_chunk_from_url(url: str):
+    try:
+        response = requests.get(url, timeout=10)
+        if response.status_code != 200:
+            raise Exception("Failed to fetch URL")
+        html_content = response.text
+        text = html2text.html2text(html_content)
+        return chunk_text(text)
+    except Exception as e:
+        return [f"Error fetching or parsing URL: {str(e)}"]

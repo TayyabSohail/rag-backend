@@ -6,12 +6,20 @@ from app.services.llm_client import query_llm
 
 router = APIRouter()
 
+def sanitize_namespace(ns: str) -> str:
+    return ns.replace("https://", "").replace("http://", "").split("/")[0]
+
 @router.post("/")
 async def chat(query: ChatQuery):
     query_vec = model.encode([query.question]).tolist()[0]
-    chunks = query_similar_chunks(query_vec, namespace=query.namespace)
+
+    # ✅ sanitize here!
+    safe_namespace = sanitize_namespace(query.namespace)
+
+    chunks = query_similar_chunks(query_vec, namespace=safe_namespace)
     context = "\n".join(chunks)
-    
-    full_prompt = f"Answer based on the context below:\n\n{context}\n\nQuestion: {query.question}"
-    answer = await query_llm(full_prompt)
+
+    prompt = f"Answer based on the context:\n\n{context}\n\nQuestion: {query.question}"
+    answer = await query_llm(prompt)
+
     return {"answer": answer}

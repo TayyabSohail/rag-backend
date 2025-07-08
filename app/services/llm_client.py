@@ -7,8 +7,8 @@ import os
 MISTRAL_API_KEY = os.getenv("LLM_API_KEY")
 BASE_URL = "https://api.mistral.ai/v1/chat/completions"
 
-async def query_llm(prompt: str):
-    print("🔑 MISTRAL_API_KEY:", MISTRAL_API_KEY)  # Debug: Make sure the key is loaded
+async def query_llm(messages: list[dict]):
+    print("🔐 Using Mistral API Key:", bool(MISTRAL_API_KEY))  # For debug
 
     headers = {
         "Authorization": f"Bearer {MISTRAL_API_KEY}",
@@ -16,11 +16,8 @@ async def query_llm(prompt: str):
     }
 
     body = {
-        "model": "mistral-small-latest",  # You can change to mistral-medium or mistral-large
-        "messages": [
-            {"role": "system", "content": "You're a helpful assistant answering using context."},
-            {"role": "user", "content": prompt}
-        ]
+        "model": "mistral-small-latest",  # or mistral-medium-latest
+        "messages": messages
     }
 
     async with httpx.AsyncClient() as client:

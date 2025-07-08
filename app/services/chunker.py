@@ -27,16 +27,21 @@ def parse_and_chunk(content: bytes, filename: str):
     return chunks
 
 def chunk_text(text: str, max_tokens: int = 300):
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    text = " ".join(lines)
     sentences = text.split(". ")
     chunks, chunk = [], ""
+
     for sentence in sentences:
         if len(chunk) + len(sentence) < max_tokens:
             chunk += sentence + ". "
         else:
-            chunks.append(chunk.strip())
+            if len(chunk.strip()) > 30:
+                chunks.append(chunk.strip())
             chunk = sentence + ". "
-    if chunk:
+    if chunk and len(chunk.strip()) > 30:
         chunks.append(chunk.strip())
+
     return chunks
 
 def parse_and_chunk_from_url(url: str):
